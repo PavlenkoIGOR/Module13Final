@@ -10,19 +10,24 @@ namespace HW2
         {
             string[] path = { @"d:\", "для SF", "Text_HW2.txt" };
             string filePath = Path.Combine(path);
+
+            CounWordsInText(filePath);
+
+            Console.ReadKey();
+        }
+
+        static void CounWordsInText(string filePath)
+        {
             string str = string.Empty;
- 
             using (StreamReader sr = File.OpenText(filePath))
             {
-                str = sr.ReadToEnd().Replace("-", string.Empty);
-                //Для того чтобы убрать из текста знаки пунктуации используем следующий фрагмент кода: 
+                str = sr.ReadToEnd().ToUpper().Replace("-", string.Empty);
+
                 var noPunctuationText = new string(str.Where(c => !char.IsPunctuation(c)).ToArray());
 
-                // Сохраняем символы-разделители в массив
-                char[] delimiters = new char[] { ' ', '\r', '\n'};
+                char[] delimiters = new char[] { ' ', '\r', '\n' };
 
-                //создание массива из слов с разбитием строки из текста, удаляя ранее перечисленные символы-разделители
-                var words = str.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+                var words = noPunctuationText.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var word in words)
                 {
                     if (!dictionary.ContainsKey(word))//проверка есть ли в dictionary слово с заданными Key и Value
@@ -34,16 +39,14 @@ namespace HW2
                         dictionary[word]++;             //если есть - увеличиваем Value на 1
                     }
                 }
+                Console.WriteLine($"10 наиболее частых слов в тексте из директории {filePath}");
                 //отсортированный список
-                //var sortedDictionary = dictionary.OrderByDescending(x => x.Value).Take(10); //сортировка по значению по убыванию
-                                                                                           //значения.оставляютмя 10 первых значения
                 foreach (var item in dictionary.OrderByDescending(x => x.Value).Take(10))
                 {
-                    Console.WriteLine(item);
+                    Console.WriteLine($"слово {item} раз");
                 }
                 sr.Close();
             }
-            Console.ReadKey();
         }
     }
 }
